@@ -1,0 +1,1062 @@
+/* ===== 基本樣式重置 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "Helvetica Neue", sans-serif;
+  background: #f8fafb;
+  color: #1f2937;
+  overflow-x: hidden;
+}
+
+/* ===== 頂部導航 ===== */
+.header {
+  background: linear-gradient(135deg, #2d5a4a 0%, #1e3a33 100%);
+  color: white;
+  padding: 20px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.12);
+  height: 88px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.view-controls {
+  display: flex;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.view-btn {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.view-btn.active,
+.view-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.datetime {
+  font-size: 16px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-role {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* ===== 主要容器 ===== */
+.main-container {
+  min-height: calc(100vh - 88px);
+  position: relative;
+}
+
+.view-container {
+  display: none;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.view-container.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 店面平面圖檢視 ===== */
+#layout-view {
+  display: flex;
+  height: calc(100vh - 88px);
+}
+
+/* ===== 控制面板 ===== */
+.control-panel {
+  width: 350px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.panel-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.panel-header p {
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ===== 統計面板 ===== */
+.stats-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+  transition: all 0.2s;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item:nth-child(1) {
+  border-left-color: #10b981;
+}
+.stat-item:nth-child(2) {
+  border-left-color: #3b82f6;
+}
+.stat-item:nth-child(3) {
+  border-left-color: #f59e0b;
+}
+.stat-item:nth-child(4) {
+  border-left-color: #8b5cf6;
+}
+
+.stat-icon {
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ===== 店面平面圖 ===== */
+.store-layout {
+  flex: 1;
+  padding: 32px;
+  background: #f8fafb;
+  overflow: auto;
+}
+
+.layout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.store-frame {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  position: relative;
+  min-height: 800px;
+  border: 3px solid #e5e7eb;
+}
+
+/* ===== 入口設計 ===== */
+.entrance {
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 40px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 -4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.entrance-door {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.entrance-arrows {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ===== 區域樣式 ===== */
+.area-zone {
+  position: absolute;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.area-zone:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border-color: #4ade80;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+}
+
+/* 區域位置定義 */
+.area-a {
+  top: 80px;
+  right: 40px;
+  width: 200px;
+  height: 180px;
+}
+
+.area-b {
+  top: 40px;
+  left: 300px;
+  width: 180px;
+  height: 140px;
+}
+
+.area-c {
+  top: 40px;
+  left: 40px;
+  width: 160px;
+  height: 140px;
+}
+
+.area-d {
+  top: 200px;
+  left: 40px;
+  width: 140px;
+  height: 160px;
+}
+
+.area-e {
+  top: 280px;
+  left: 200px;
+  width: 180px;
+  height: 140px;
+}
+
+.area-f {
+  bottom: 60px;
+  left: 40px;
+  width: 160px;
+  height: 120px;
+}
+
+.area-g {
+  bottom: 40px;
+  right: 40px;
+  width: 140px;
+  height: 100px;
+}
+
+/* ===== 區域內容樣式 ===== */
+.area-label {
+  margin-bottom: 12px;
+}
+
+.area-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.area-status {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.area-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.shelf-mini {
+  width: 24px;
+  height: 16px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.shelf-mini.bestseller {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.shelf-mini.warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.shelf-mini.critical {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.area-stats {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ===== 收銀台樣式 ===== */
+.cashier-zone {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+}
+
+.cashier-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.cashier-label {
+  font-size: 10px;
+}
+
+/* ===== 走道指示 ===== */
+.walkway-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px 24px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px dashed #3b82f6;
+  border-radius: 8px;
+  color: #3b82f6;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ===== 圖例說明 ===== */
+.legend {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.legend h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-color.normal {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.legend-color.bestseller {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.legend-color.warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.legend-color.critical {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* ===== 貨架管理檢視 ===== */
+#management-view {
+  padding: 32px;
+  background: #f8fafb;
+  min-height: calc(100vh - 88px);
+}
+
+.management-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+.current-area-info h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.current-area-info p {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* ===== 區域統計詳情 ===== */
+.area-stats-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.area-stat-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #3b82f6;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.area-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.area-stat-card:nth-child(1) {
+  border-left-color: #10b981;
+}
+.area-stat-card:nth-child(2) {
+  border-left-color: #3b82f6;
+}
+.area-stat-card:nth-child(3) {
+  border-left-color: #f59e0b;
+}
+.area-stat-card:nth-child(4) {
+  border-left-color: #ef4444;
+}
+
+.area-stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  background: #f8fafc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.stat-text {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ===== 貨架管理工具列 ===== */
+.shelf-management-toolbar {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toolbar-btn:hover {
+  border-color: #3b82f6;
+  background: #f8faff;
+  color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.toolbar-btn.export {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.toolbar-btn.export:hover {
+  background: #f0fdf4;
+}
+
+/* ===== 貨架網格 ===== */
+.shelves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.shelf-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.shelf-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-color: #4ade80;
+}
+
+.shelf-card.warning {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.shelf-card.critical {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.shelf-card.bestseller {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.shelf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.shelf-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.shelf-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.shelf-status.normal {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.shelf-status.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.shelf-status.critical {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.shelf-status.bestseller {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.shelf-visual {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.shelf-row {
+  display: flex;
+  gap: 6px;
+}
+
+.shelf-slot {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.shelf-slot.filled {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.shelf-slot.empty {
+  background: #e5e7eb;
+  border: 1px dashed #9ca3af;
+}
+
+.shelf-slot.bestseller {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.shelf-slot.warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.shelf-slot.critical {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.shelf-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.shelf-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  text-align: center;
+}
+
+.action-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.action-btn.primary {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.action-btn.primary:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* ===== 響應式設計 ===== */
+@media (max-width: 1200px) {
+  #layout-view {
+    flex-direction: column;
+  }
+
+  .control-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    max-height: 300px;
+  }
+
+  .stats-panel {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .stat-item {
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 20px;
+    height: 70px;
+  }
+
+  .logo {
+    font-size: 20px;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .header-right {
+    gap: 16px;
+  }
+
+  .view-controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .view-btn {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .user-info {
+    padding: 8px 12px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .user-role {
+    font-size: 12px;
+  }
+
+  .control-panel {
+    padding: 20px;
+    max-height: 250px;
+  }
+
+  .store-layout {
+    padding: 20px;
+  }
+
+  .store-frame {
+    padding: 20px;
+    min-height: 600px;
+  }
+
+  .area-zone {
+    padding: 12px;
+  }
+
+  .area-title {
+    font-size: 14px;
+  }
+
+  .area-stats {
+    font-size: 10px;
+  }
+
+  #management-view {
+    padding: 20px;
+  }
+
+  .management-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .current-area-info h2 {
+    font-size: 24px;
+  }
+
+  .area-stats-detail {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .shelf-management-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    justify-content: center;
+  }
+
+  .shelves-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-right {
+    gap: 12px;
+  }
+
+  .datetime {
+    display: none;
+  }
+
+  .view-controls {
+    display: none;
+  }
+
+  .stats-panel {
+    flex-direction: column;
+  }
+
+  .area-stats-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .store-frame {
+    min-height: 500px;
+  }
+
+  /* 調整區域位置以適應小屏幕 */
+  .area-a {
+    top: 60px;
+    right: 20px;
+    width: 120px;
+    height: 100px;
+  }
+
+  .area-b {
+    top: 20px;
+    left: 150px;
+    width: 120px;
+    height: 80px;
+  }
+
+  .area-c {
+    top: 20px;
+    left: 20px;
+    width: 100px;
+    height: 80px;
+  }
+
+  .area-d {
+    top: 120px;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+  }
+
+  .area-e {
+    top: 180px;
+    left: 140px;
+    width: 120px;
+    height: 80px;
+  }
+
+  .area-f {
+    bottom: 40px;
+    left: 20px;
+    width: 100px;
+    height: 80px;
+  }
+
+  .area-g {
+    bottom: 20px;
+    right: 20px;
+    width: 100px;
+    height: 60px;
+  }
+}
