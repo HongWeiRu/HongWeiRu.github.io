@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貨架管理 - ShelfManager Pro</title>
+    <style>
+        /* ===== 基本樣式重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #f8fafb;
+            overflow-x: hidden;
+        }
+
+        /* ===== 響應式變數 ===== */
+        :root {
+            --sidebar-width-desktop: 280px;
+            --header-height-desktop: 88px;
+            --header-height-mobile: 70px;
+            --padding-desktop: 32px;
+            --padding-tablet: 24px;
+            --padding-mobile: 16px;
+            --card-gap-desktop: 24px;
+            --card-gap-mobile: 16px;
+        }
+
+        /* ===== 頂部導航 ===== */
+        .header {
+            background: linear-gradient(135deg, #2d5a4a 0%, #1e3a33 100%);
+            color: white;
+            padding: 20px var(--padding-desktop);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.12);
+            height: var(--header-height-desktop);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .quick-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+
+        .quick-btn.add-shelf {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+        }
+
+        .quick-btn.add-shelf:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .datetime {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* ===== 主要內容區 ===== */
+        .content {
+            padding: var(--padding-desktop);
+            min-height: calc(100vh - var(--header-height-desktop));
+            background: #f8fafb;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        /* ===== 統計卡片 ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--card-gap-desktop);
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 6px solid;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .stat-card.total { border-left-color: #3b82f6; }
+        .stat-card.published { border-left-color: #10b981; }
+        .stat-card.draft { border-left-color: #f59e0b; }
+        .stat-card.usage { border-left-color: #8b5cf6; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            color: #6b7280;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        /* ===== 管理工具列 ===== */
+        .management-toolbar {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            border-color: #3b82f6;
+            background: #f8faff;
+            color: #3b82f6;
+        }
+
+        .toolbar-btn.export {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .toolbar-btn.export:hover {
+            background: #f0fdf4;
+        }
+
+        .add-shelf-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-shelf-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* ===== 貨架管理網格 ===== */
+        .management-section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .shelf-management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--card-gap-desktop);
+        }
+
+        /* ===== 貨架卡片 ===== */
+        .shelf-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shelf-card:hover {
+            border-color: #4ade80;
+            background: white;
+            box-shadow: 0 8px 20px rgba(74, 222, 128, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .shelf-card.edit-mode {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .shelf-card.draft {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .shelf-card.published {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .shelf-card.maintenance {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .shelf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .shelf-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .shelf-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .shelf-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .shelf-status.published {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .shelf-status.draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .shelf-status.maintenance {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .edit-btn, .publish-btn, .delete-btn {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .edit-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #2563eb;
+        }
+
+        .edit-btn.editing {
+            background: #10b981;
+        }
+
+        .publish-btn {
+            background: #10b981;
+            color: white;
+        }
+
+        .publish-btn:hover {
+            background: #059669;
+        }
+
+        .publish-btn:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* ===== 貨架視覺化 ===== */
+        .shelf-visual {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        .shelf-visual.edit-mode {
+            border-color: #3b82f6;
+            background: #f8faff;
+        }
+
+        .shelf-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .shelf-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .row-label {
+            width: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        /* ===== 商品位置 ===== */
+        .product-slot {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid #d1d5db;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .product-slot:hover {
+            transform: scale(1.1);
+        }
+
+        .product-slot.filled {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            border-color: #22c55e;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+        }
+
+        .product-slot.empty {
+            background: #f9fafb;
+            border-style: dashed;
+        }
+
+        .product-slot.empty:hover {
+            background: #e5f3ff;
+            border-color: #3b82f6;
+        }
+
+        .product-slot.bestseller {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-color: #d97706;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .product-slot.bestseller::after {
+            content: '★';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .product-slot.low-stock {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: #dc2626;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+        }
+
+        .product-slot.low-stock::after {
+            content: '!';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .product-slot.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .product-slot.drop-target {
+            border-color: #3b82f6;
+            background: #dbeafe;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .shelf-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* ===== 模態框 ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .shelf-size-preview {
+            background: #f8faff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .preview-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .preview-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .preview-slot {
+            width: 20px;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary, .btn-primary {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* ===== 確認對話框 ===== */
+        .confirm-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .confirm-message {
+            color: #6b7280;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* ===== 通知系統 ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid;
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            max-width: 350px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: #10b981;
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification.info {
+            border-left-color: #3b82f6;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+        }
+
+        .notification-text {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* ===== 響應式設計 ===== */
+        @media (max-width: 1024px) {
+            .shelf-management-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px var(--padding-mobile);
+                height: var(--header-height-mobile);
+            }
+            
+            .content {
+                padding: var(--padding-mobile);
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .page-subtitle {
+                font-size: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: var(--card-gap-mobile);
+            }
+            
+            .management-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .toolbar-left, .toolbar-right {
+                justify-content: center;
+            }
+            
+            .shelf-management-grid {
+                grid-template-columns: 1fr;
+                gap: var(--card-gap-mobile);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .shelf-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            
+            .shelf-controls {
+                justify-content: center;
+            }
+            
+            .quick-actions {
+                display: none;
+            }
+            
+            .header-center {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <span>ShelfManager Pro</span>
+        </div>
+        <div class="header-center">
+            <div class="quick-actions">
+                <button class="quick-btn">快速同步</button>
+                <button class="quick-btn">庫存報告</button>
+                <button class="quick-btn add-shelf" onclick="showAddShelfModal()">+ 新增貨架</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="datetime" id="datetime">週五, 8月 1日, 2025 • 15:55:16</div>
+            <div class="user-info">
+                <div class="user-avatar">陳</div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 600;">陳店長</div>
+                    <div style="font-size: 14px; opacity: 0.8;">門市經理</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要內容 -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">貨架管理</h1>
+            <p class="page-subtitle">管理所有貨架的狀態、佈局和商品陳列</p>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-header">
+                    <span class="stat-title">總貨架數</span>
+                    <div class="stat-icon" style="background: #dbeafe; color: #3b82f6;">🏪</div>
+                </div>
+                <div class="stat-value" id="totalShelves">4</div>
+            </div>
+
+            <div class="stat-card published">
+                <div class="stat-header">
+                    <span class="stat-title">已發佈</span>
+                    <div class="stat-icon" style="background: #dcfce7; color: #10b981;">✅</div>
+                </div>
+                <div class="stat-value" id="publishedShelves">2</div>
+            </div>
+
+            <div class="stat-card draft">
+                <div class="stat-header">
+                    <span class="stat-title">草稿</span>
+                    <div class="stat-icon" style="background: #fef3c7; color: #f59e0b;">📝</div>
+                </div>
+                <div class="stat-value" id="draftShelves">1</div>
+            </div>
+
+            <div class="stat-card usage">
+                <div class="stat-header">
+                    <span class="stat-title">平均使用率</span>
+                    <div class="stat-icon" style="background: #ede9fe; color: #8b5cf6;">📊</div>
+                </div>
+                <div class="stat-value" id="avgUsageRate">85%</div>
+            </div>
+        </div>
+
+        <!-- 管理工具列 -->
+        <div class="management-toolbar">
+            <div class="toolbar-left">
+                <div class="filter-group">
+                    <label class="filter-label">狀態：</label>
+                    <select class="filter-select" id="statusFilter" onchange="filterShelves()">
+                        <option value="all">全部</option>
+                        <option value="published">已發佈</option>
+                        <option value="draft">草稿</option>
+                        <option value="maintenance">維護中</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">區域：</label>
+                    <select class="filter-select" id="areaFilter" onchange="filterShelves()">
+                        <option value="all">全部區域</option>
+                        <option value="A">A區</option>
+                        <option value="B">B區</option>
+                        <option value="C">C區</option>
+                        <option value="D">D區</option>
+                        <option value="E">E區</option>
+                        <option value="F">F區</option>
+                    </select>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <button class="toolbar-btn" onclick="refreshShelves()">
+                    <span>🔄</span>
+                    <span>重新整理</span>
+                </button>
+                <button class="toolbar-btn" onclick="bulkPublish()">
+                    <span>🚀</span>
+                    <span>批量發佈</span>
+                </button>
+                <button class="toolbar-btn export" onclick="exportShelves()">
+                    <span>📊</span>
+                    <span>匯出報表</span>
+                </button>
+                <button class="add-shelf-btn" onclick="showAddShelfModal()">
+                    <span>+</span>
+                    <span>新增貨架</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 貨架管理網格 -->
+        <div class="management-section">
+            <div class="shelf-management-grid" id="managementShelfGrid">
+                <!-- 貨架卡片將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 新增貨架模態框 -->
+    <div class="modal-overlay" id="addShelfModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">新增貨架</h3>
+                <button class="modal-close" onclick="hideAddShelfModal()">&times;</button>
+            </div>
+            
+            <form id="addShelfForm">
+                <div class="form-group">
+                    <label class="form-label">貨架名稱</label>
+                    <input type="text" name="shelfName" class="form-input" placeholder="例如：A區貨架 #5" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">所屬區域</label>
+                        <select name="shelfArea" class="form-select" required>
+                            <option value="">請選擇區域</option>
+                            <option value="A">A區</option>
+                            <option value="B">B區</option>
+                            <option value="C">C區</option>
+                            <option value="D">D區</option>
+                            <option value="E">E區</option>
+                            <option value="F">F區</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">貨架類型</label>
+                        <select name="shelfType" class="form-select">
+                            <option value="standard">標準貨架</option>
+                            <option value="premium">精品展示架</option>
+                            <option value="promotion">促銷展示架</option>
+                            <option value="seasonal">季節性貨架</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">貨架層數</label>
+                        <input type="number" name="shelfRows" id="shelfRows" class="form-input" 
+                               value="3" min="1" max="6" onchange="updateShelfPreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">每層商品數</label>
+                        <input type="number" name="shelfCols" id="shelfCols" class="form-input" 
+                               value="6" min="3" max="10" onchange="updateShelfPreview()">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">備註說明</label>
+                    <input type="text" name="shelfNotes" class="form-input" 
+                           placeholder="選填：特殊說明或注意事項">
+                </div>
+                
+                <div class="shelf-size-preview">
+                    <div class="preview-title">貨架預覽</div>
+                    <div class="preview-grid">
+                        <!-- 預覽內容由 JavaScript 生成 -->
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="hideAddShelfModal()">取消</button>
+                <button type="button" class="btn-primary" onclick="createNewShelf()">建立貨架</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 發佈確認對話框 -->
+    <div class="modal-overlay" id="publishConfirmModal">
+        <div class="confirm-dialog">
+            <div class="confirm-icon">🚀</div>
+            <h3 class="confirm-title">確認發佈貨架</h3>
+            <p class="confirm-message">
+                確定要發佈貨架 "<span id="confirmShelfName"></span>" 嗎？<br>
+                發佈後貨架將開始運行，客戶可以看到商品陳列。
+            </p>
+            <div class="confirm-actions">
+                <button class="btn-secondary" onclick="hidePublishConfirmModal()">取消</button>
+                <button class="btn-primary" id="confirmPublishBtn">確認發佈</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 全域變數 =====
+        let shelfCounter = 5;
+        let currentPage = 'shelf-management';
+
+        // 貨架資料存儲
+        let shelvesData = {
+            'A1': { 
+                id: 'A1', 
+                name: 'A區貨架 #1', 
+                status: 'published', 
+                area: 'A', 
+                rows: 3,
+                cols: 6,
+                usage: 89,
+                bestsellers: 2,
+                products: generateInitialProducts('A1')
+            },
+            'B2': { 
+                id: 'B2', 
+                name: 'B區貨架 #2', 
+                status: 'draft', 
+                area: 'B', 
+                rows: 3,
+                cols: 6,
+                usage: 83,
+                bestsellers: 2,
+                products: generateInitialProducts('B2')
+            },
+            'C3': { 
+                id: 'C3', 
+                name: 'C區貨架 #3', 
+                status: 'maintenance', 
+                area: 'C', 
+                rows: 3,
+                cols: 6,
+                usage: 67,
+                bestsellers: 0,
+                products: generateInitialProducts('C3')
+            },
+            'D4': { 
+                id: 'D4', 
+                name: 'D區貨架 #4', 
+                status: 'published', 
+                area: 'D', 
+                rows: 3,
+                cols: 6,
+                usage: 100,
+                bestsellers: 3,
+                products: generateInitialProducts('D4')
+            }
+        };
+
+        // ===== 生成初始商品資料 =====
+        function generateInitialProducts(shelfId) {
+            const products = [];
+            const totalSlots = 18; // 3x6
+            
+            for (let i = 0; i < totalSlots; i++) {
+                const row = Math.floor(i / 6);
+                const col = i % 6;
+                let productData = { row, col };
+                
+                switch (shelfId) {
+                    case 'A1':
+                        if (i === 0 || i === 8) productData.type = 'bestseller';
+                        else if (i === 4 || i === 13) productData.type = 'empty';
+                        else productData.type = 'filled';
+                        break;
+                    case 'B2':
+                        if (i === 2 || i === 16) productData.type = 'bestseller';
+                        else if (i === 9 || i === 10) productData.type = 'empty';
+                        else productData.type = 'filled';
+                        break;
+                    case 'C3':
+                        if (i < 6) productData.type = 'empty';
+                        else productData.type = 'filled';
+                        break;
+                    case 'D4':
+                        if (i === 6 || i === 7 || i === 15) productData.type = 'bestseller';
+                        else if (i === 11 || i === 17) productData.type = 'low-stock';
+                        else productData.type = 'filled';
+                        break;
+                    default:
+                        productData.type = 'empty';
+                }
+                
+                if (productData.type !== 'empty') {
+                    productData.productId = `P${String(i + 1).padStart(3, '0')}`;
+                }
+                
+                products.push(productData);
+            }
+            
+            return products;
+        }
+
+        // ===== 新增貨架功能 =====
+        function showAddShelfModal() {
+            const modal = document.getElementById('addShelfModal');
+            modal.classList.add('show');
+            
+            document.getElementById('addShelfForm').reset();
+            document.getElementById('shelfRows').value = 3;
+            document.getElementById('shelfCols').value = 6;
+            updateShelfPreview();
+        }
+
+        function hideAddShelfModal() {
+            const modal = document.getElementById('addShelfModal');
+            modal.classList.remove('show');
+        }
+
+        function updateShelfPreview() {
+            const rows = parseInt(document.getElementById('shelfRows').value) || 3;
+            const cols = parseInt(document.getElementById('shelfCols').value) || 6;
+            
+            const previewGrid = document.querySelector('.preview-grid');
+            previewGrid.innerHTML = '';
+            
+            for (let r = 0; r < rows; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'preview-row';
+                
+                for (let c = 0; c < cols; c++) {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'preview-slot';
+                    rowDiv.appendChild(slotDiv);
+                }
+                
+                previewGrid.appendChild(rowDiv);
+            }
+        }
+
+        function createNewShelf() {
+            const form = document.getElementById('addShelfForm');
+            const formData = new FormData(form);
+            
+            if (!formData.get('shelfName') || !formData.get('shelfArea')) {
+                showNotification('error', '輸入錯誤', '請填寫所有必填欄位');
+                return;
+            }
+            
+            const shelfData = {
+                id: formData.get('shelfArea') + shelfCounter,
+                name: formData.get('shelfName'),
+                area: formData.get('shelfArea'),
+                status: 'draft',
+                rows: parseInt(formData.get('shelfRows')) || 3,
+                cols: parseInt(formData.get('shelfCols')) || 6,
+                usage: 0,
+                bestsellers: 0,
+                products: []
+            };
+            
+            for (let r = 0; r < shelfData.rows; r++) {
+                for (let c = 0; c < shelfData.cols; c++) {
+                    shelfData.products.push({
+                        row: r,
+                        col: c,
+                        type: 'empty'
+                    });
+                }
+            }
+            
+            shelvesData[shelfData.id] = shelfData;
+            shelfCounter++;
+            
+            hideAddShelfModal();
+            renderManagementShelves();
+            updateManagementStats();
+            
+            showNotification('success', '新增成功', `貨架 "${shelfData.name}" 已成功建立`);
+        }
+
+        // ===== 發佈功能 =====
+        function togglePublishStatus(button) {
+            const shelfCard = button.closest('.shelf-card');
+            const shelfId = shelfCard.dataset.shelf;
+            const shelf = shelvesData[shelfId];
+            
+            if (!shelf || shelf.status === 'maintenance') return;
+            
+            if (shelf.status === 'draft') {
+                showPublishConfirmDialog(shelfId, shelf.name);
+            } else if (shelf.status === 'published') {
+                showNotification('info', '提示', '已發佈的貨架無法取消發佈');
+            }
+        }
+
+        function showPublishConfirmDialog(shelfId, shelfName) {
+            const modal = document.getElementById('publishConfirmModal');
+            document.getElementById('confirmShelfName').textContent = shelfName;
+            document.getElementById('confirmPublishBtn').onclick = () => publishShelf(shelfId);
+            modal.classList.add('show');
+        }
+
+        function hidePublishConfirmModal() {
+            const modal = document.getElementById('publishConfirmModal');
+            modal.classList.remove('show');
+        }
+
+        function publishShelf(shelfId) {
+            const shelf = shelvesData[shelfId];
+            shelf.status = 'published';
+            
+            hidePublishConfirmModal();
+            renderManagementShelves();
+            updateManagementStats();
+            
+            showNotification('success', '發佈成功', `貨架 "${shelf.name}" 已成功發佈`);
+        }
+
+        // ===== 刪除功能 =====
+        function deleteShelf(button) {
+            const shelfCard = button.closest('.shelf-card');
+            const shelfId = shelfCard.dataset.shelf;
+            const shelf = shelvesData[shelfId];
+            
+            if (confirm(`確定要刪除貨架 "${shelf.name}" 嗎？此操作無法恢復。`)) {
+                delete shelvesData[shelfId];
+                renderManagementShelves();
+                updateManagementStats();
+                showNotification('success', '刪除成功', `貨架 "${shelf.name}" 已被刪除`);
+            }
+        }
+
+        // ===== 編輯模式 =====
+        function toggleEditMode(button) {
+            const shelfCard = button.closest('.shelf-card');
+            const shelfVisual = shelfCard.querySelector('.shelf-visual');
+            const isEditing = button.classList.contains('editing');
+            
+            if (isEditing) {
+                button.textContent = '編輯';
+                button.classList.remove('editing');
+                shelfCard.classList.remove('edit-mode');
+                shelfVisual.classList.remove('edit-mode');
+                enableDragAndDrop(shelfCard, false);
+            } else {
+                button.textContent = '完成';
+                button.classList.add('editing');
+                shelfCard.classList.add('edit-mode');
+                shelfVisual.classList.add('edit-mode');
+                enableDragAndDrop(shelfCard, true);
+            }
+        }
+
+        // ===== 拖拉功能 =====
+        let draggedElement = null;
+
+        function enableDragAndDrop(shelfCard, enable) {
+            const productSlots = shelfCard.querySelectorAll('.product-slot');
+            
+            productSlots.forEach(slot => {
+                if (enable) {
+                    slot.addEventListener('dragstart', dragStart);
+                    slot.addEventListener('dragend', dragEnd);
+                    if (slot.classList.contains('empty')) {
+                        slot.addEventListener('dragover', allowDrop);
+                        slot.addEventListener('drop', drop);
+                    }
+                } else {
+                    slot.removeEventListener('dragstart', dragStart);
+                    slot.removeEventListener('dragend', dragEnd);
+                    slot.removeEventListener('dragover', allowDrop);
+                    slot.removeEventListener('drop', drop);
+                }
+            });
+        }
+
+        function dragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+
+        function dragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.drop-target').forEach(el => {
+                el.classList.remove('drop-target');
+            });
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            this.classList.add('drop-target');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            this.classList.remove('drop-target');
+            
+            if (draggedElement && this.classList.contains('empty')) {
+                const draggedProductId = draggedElement.dataset.product;
+                const draggedClasses = Array.from(draggedElement.classList);
+                
+                this.className = draggedClasses.join(' ');
+                this.dataset.product = draggedProductId;
+                this.draggable = true;
+                
+                draggedElement.className = 'product-slot empty';
+                draggedElement.dataset.slot = 'empty';
+                draggedElement.dataset.product = '';
+                draggedElement.draggable = false;
+                
+                const shelfCard = this.closest('.shelf-card');
+                enableDragAndDrop(shelfCard, true);
+                updateShelfStats(shelfCard);
+                
+                console.log(`商品 ${draggedProductId} 已移動到新位置`);
+            }
+            
+            draggedElement = null;
+        }
+
+        // ===== 渲染功能 =====
+        function renderManagementShelves() {
+            const grid = document.getElementById('managementShelfGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            Object.values(shelvesData).forEach(shelf => {
+                if (shouldShowShelf(shelf)) {
+                    const shelfCard = createShelfCard(shelf);
+                    grid.appendChild(shelfCard);
+                }
+            });
+        }
+
+        function shouldShowShelf(shelf) {
+            const statusFilter = document.getElementById('statusFilter')?.value || 'all';
+            const areaFilter = document.getElementById('areaFilter')?.value || 'all';
+            
+            if (statusFilter !== 'all' && shelf.status !== statusFilter) return false;
+            if (areaFilter !== 'all' && shelf.area !== areaFilter) return false;
+            
+            return true;
+        }
+
+        function createShelfCard(shelf) {
+            const card = document.createElement('div');
+            card.className = `shelf-card ${shelf.status}`;
+            card.dataset.shelf = shelf.id;
+            
+            const statusText = {
+                'published': '已發佈',
+                'draft': '草稿',
+                'maintenance': '維護中'
+            };
+            
+            const canEdit = shelf.status !== 'maintenance';
+            const canPublish = shelf.status === 'draft';
+            
+            card.innerHTML = `
+                <div class="shelf-header">
+                    <h3 class="shelf-title">${shelf.name}</h3>
+                    <div class="shelf-controls">
+                        <span class="shelf-status ${shelf.status}">${statusText[shelf.status]}</span>
+                        <button class="edit-btn" onclick="toggleEditMode(this)" ${!canEdit ? 'disabled' : ''}>編輯</button>
+                        <button class="publish-btn ${shelf.status === 'published' ? 'published' : ''}" 
+                                onclick="togglePublishStatus(this)" 
+                                ${!canPublish ? 'disabled' : ''}>
+                            ${shelf.status === 'published' ? '已發佈' : '發佈'}
+                        </button>
+                        <button class="delete-btn" onclick="deleteShelf(this)">刪除</button>
+                    </div>
+                </div>
+                <div class="shelf-visual">
+                    ${generateShelfRows(shelf)}
+                </div>
+                <div class="shelf-stats">
+                    <span>使用率: ${shelf.usage}%</span>
+                    <span>明星商品: ${shelf.bestsellers}</span>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function generateShelfRows(shelf) {
+            const rowLabels = ['上', '中', '下', '四', '五', '六'];
+            let html = '<div class="shelf-rows">';
+            
+            for (let r = 0; r < shelf.rows; r++) {
+                html += `<div class="shelf-row">`;
+                html += `<div class="row-label">${rowLabels[r] || r + 1}</div>`;
+                
+                for (let c = 0; c < shelf.cols; c++) {
+                    const product = shelf.products.find(p => p.row === r && p.col === c);
+                    const classes = ['product-slot'];
+                    
+                    if (product) {
+                        classes.push(product.type);
+                        if (product.productId) {
+                            html += `<div class="${classes.join(' ')}" data-product="${product.productId}" draggable="true"></div>`;
+                        } else {
+                            html += `<div class="${classes.join(' ')}" data-slot="empty" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`;
+                        }
+                    } else {
+                        html += `<div class="product-slot empty" data-slot="empty" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`;
+                    }
+                }
+                
+                html += `</div>`;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function updateShelfStats(shelfCard) {
+            const allSlots = shelfCard.querySelectorAll('.product-slot');
+            const filledSlots = shelfCard.querySelectorAll('.product-slot.filled, .product-slot.bestseller, .product-slot.low-stock');
+            const bestsellerSlots = shelfCard.querySelectorAll('.product-slot.bestseller');
+            
+            const usageRate = Math.round((filledSlots.length / allSlots.length) * 100);
+            const bestsellerCount = bestsellerSlots.length;
+            
+            const statsDiv = shelfCard.querySelector('.shelf-stats');
+            statsDiv.innerHTML = `
+                <span>使用率: ${usageRate}%</span>
+                <span>明星商品: ${bestsellerCount}</span>
+            `;
+            
+            const shelfId = shelfCard.dataset.shelf;
+            if (shelvesData[shelfId]) {
+                shelvesData[shelfId].usage = usageRate;
+                shelvesData[shelfId].bestsellers = bestsellerCount;
+            }
+        }
+
+        function updateManagementStats() {
+            const totalShelves = Object.keys(shelvesData).length;
+            const publishedShelves = Object.values(shelvesData).filter(s => s.status === 'published').length;
+            const draftShelves = Object.values(shelvesData).filter(s => s.status === 'draft').length;
+            const avgUsage = Math.round(Object.values(shelvesData).reduce((sum, s) => sum + s.usage, 0) / totalShelves);
+            
+            document.getElementById('totalShelves').textContent = totalShelves;
+            document.getElementById('publishedShelves').textContent = publishedShelves;
+            document.getElementById('draftShelves').textContent = draftShelves;
+            document.getElementById('avgUsageRate').textContent = avgUsage + '%';
+        }
+
+        // ===== 篩選和操作功能 =====
+        function filterShelves() {
+            renderManagementShelves();
+        }
+
+        function refreshShelves() {
+            renderManagementShelves();
+            updateManagementStats();
+            showNotification('success', '重新整理', '貨架資料已更新');
+        }
+
+        function bulkPublish() {
+            const draftShelves = Object.values(shelvesData).filter(s => s.status === 'draft');
+            
+            if (draftShelves.length === 0) {
+                showNotification('info', '提示', '沒有草稿狀態的貨架需要發佈');
+                return;
+            }
+            
+            if (confirm(`確定要發佈 ${draftShelves.length} 個草稿貨架嗎？`)) {
+                draftShelves.forEach(shelf => {
+                    shelf.status = 'published';
+                });
+                
+                renderManagementShelves();
+                updateManagementStats();
+                showNotification('success', '批量發佈成功', `已發佈 ${draftShelves.length} 個貨架`);
+            }
+        }
+
+        function exportShelves() {
+            const data = Object.values(shelvesData).map(shelf => ({
+                ID: shelf.id,
+                名稱: shelf.name,
+                區域: shelf.area,
+                狀態: shelf.status,
+                使用率: shelf.usage + '%',
+                明星商品: shelf.bestsellers,
+                規格: `${shelf.rows}x${shelf.cols}`
+            }));
+            
+            const csv = convertToCSV(data);
+            downloadCSV(csv, 'shelves-report.csv');
+            showNotification('success', '匯出成功', '貨架報表已下載');
+        }
+
+        function convertToCSV(objArray) {
+            const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+            let str = '';
+            
+            const headers = Object.keys(array[0]);
+            str += headers.join(',') + '\r\n';
+            
+            for (let i = 0; i < array.length; i++) {
+                let line = '';
+                for (let index in array[i]) {
+                    if (line !== '') line += ','
+                    line += array[i][index];
+                }
+                str += line + '\r\n';
+            }
+            
+            return str;
+        }
+
+        function downloadCSV(csv, filename) {
+            const csvFile = new Blob([csv], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        // ===== 通知系統 =====
+        function showNotification(type, title, message) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'info': 'ℹ️'
+            };
+            
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-icon">${icons[type]}</div>
+                    <div class="notification-text">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // ===== 時間更新 =====
+        function updateDateTime() {
+            const now = new Date();
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            
+            const dayName = '週' + days[now.getDay()];
+            const month = months[now.getMonth()];
+            const date = now.getDate();
+            const year = now.getFullYear();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            const dateTimeString = `${dayName}, ${month} ${date}日, ${year} • ${hours}:${minutes}:${seconds}`;
+            
+            const dateTimeElement = document.getElementById('datetime');
+            if (dateTimeElement) {
+                dateTimeElement.textContent = dateTimeString;
+            }
+        }
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', function() {
+            renderManagementShelves();
+            updateManagementStats();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // 點擊模態框外部關閉
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-overlay')) {
+                    e.target.classList.remove('show');
+                }
+            });
+            
+            console.log('貨架管理頁面初始化完成');
+        });
+    </script>
+</body>
+</html>

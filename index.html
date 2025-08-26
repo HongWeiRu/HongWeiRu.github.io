@@ -1,10 +1,676 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>你好，GitHub</title>
-  </head>
-  <body>
-    <h1>覺得厲害</h1>
-  </body>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>零售貨架管理系統 - 響應式版本</title>
+    <link rel="stylesheet" href="styles-components.css">
+    <link rel="stylesheet" href="styles-pages.css">
+    <link rel="stylesheet" href="styles-base.css">
+    <script src="script.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <span>ShelfManager Pro</span>
+        </div>
+        <div class="header-center">
+            <div class="quick-actions">
+                <button class="quick-btn">快速同步</button>
+                <button class="quick-btn">庫存報告</button>
+                <button class="quick-btn add-shelf" onclick="showAddShelfModal()">+ 新增貨架</button>
+                <button class="quick-btn" onclick="toggleProductPanel()">商品庫存</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="datetime">週三, 7月 29日, 2025 • 15:55:16</div>
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="user-info">
+                <div class="user-avatar">陳</div>
+                <div>
+                    <div style="font-size: 16px; font-weight: 600;">陳店長</div>
+                    <div style="font-size: 14px; opacity: 0.8;">門市經理</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="nav-section">
+                <div class="nav-section-title">主要功能</div>
+                <div class="nav-item active" onclick="showPage('dashboard')">
+                    <div class="nav-icon">📊</div>
+                    <span>總覽面板</span>
+                </div>
+                <div class="nav-item" onclick="showPage('shelf-management')">
+                    <div class="nav-icon">🏪</div>
+                    <span>貨架管理</span>
+                </div>
+                <!-- <div class="nav-item" onclick="showPage('inventory')"> -->
+                    <!-- <div class="nav-icon">📦</div> -->
+                    <!-- <span>商品庫存</span> -->
+                <!-- </div> -->
+                <div class="nav-item" onclick="showPage('bestsellers')">
+                    <div class="nav-icon">⭐</div>
+                    <span>明星商品</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">分析報表</div>
+                <div class="nav-item" onclick="showPage('sales-report')">
+                    <div class="nav-icon">📈</div>
+                    <span>銷售報表</span>
+                </div>
+                <!-- <div class="nav-item" onclick="showPage('customer-analysis')"> -->
+                    <!-- <div class="nav-icon">👥</div> -->
+                    <!-- <span>客戶分析</span> -->
+                <!-- </div> -->
+                <div class="nav-item" onclick="showPage('profit-analysis')">
+                    <div class="nav-icon">💰</div>
+                    <span>獲利分析</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">系統設定</div>
+                <div class="nav-item" onclick="showPage('system-settings')">
+                    <div class="nav-icon">⚙️</div>
+                    <span>系統設定</span>
+                </div>
+                <div class="nav-item" onclick="showPage('data-sync')">
+                    <div class="nav-icon">🔄</div>
+                    <span>資料同步</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="content">
+            <!-- 總覽面板頁面 -->
+            <div id="dashboard-page" class="page-content active">
+                <div class="page-header">
+                    <h1 class="page-title">今日營運總覽</h1>
+                    <p class="page-subtitle">歡迎回來，陳店長。以下是今日貨架與銷售狀況的即時資訊</p>
+                </div>
+
+                <!-- 統計卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card sales">
+                        <div class="stat-header">
+                            <span class="stat-title">今日銷售額</span>
+                            <div class="stat-icon" style="background: #dcfce7; color: #10b981;">💰</div>
+                        </div>
+                        <div class="stat-value">NT$28,540</div>
+                        <div class="stat-change positive">
+                            <span>↗ 12.5%</span>
+                            <span>較昨日成長</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card inventory">
+                        <div class="stat-header">
+                            <span class="stat-title">整體庫存率</span>
+                            <div class="stat-icon" style="background: #dbeafe; color: #3b82f6;">📦</div>
+                        </div>
+                        <div class="stat-value">92%</div>
+                        <div class="stat-change positive">
+                            <span>↗ 3.2%</span>
+                            <span>庫存充足</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card alerts">
+                        <div class="stat-header">
+                            <span class="stat-title">庫存警告</span>
+                            <div class="stat-icon" style="background: #fef3c7; color: #f59e0b;">⚠️</div>
+                        </div>
+                        <div class="stat-value">5</div>
+                        <div class="stat-change negative">
+                            <span>+2</span>
+                            <span>需要補貨</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card performance">
+                        <div class="stat-header">
+                            <span class="stat-title">貨架效率</span>
+                            <div class="stat-icon" style="background: #ede9fe; color: #8b5cf6;">📊</div>
+                        </div>
+                        <div class="stat-value">87%</div>
+                        <div class="stat-change positive">
+                            <span>↗ 5.1%</span>
+                            <span>效率提升</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主要內容網格 -->
+                <div class="main-content-grid">
+                    <!-- 左側：貨架管理 -->
+                    <div class="left-column">
+                        <div class="shelf-section">
+                            <div class="section-header">
+                                <h2 class="section-title">貨架即時狀況</h2>
+                                <div class="section-controls">
+                                    <div class="view-toggle">
+                                        <button class="toggle-btn active">網格檢視</button>
+                                        <button class="toggle-btn">清單檢視</button>
+                                    </div>
+                                    <button class="add-shelf-btn" onclick="showAddShelfModal()">
+                                        <span>+</span>
+                                        <span>新增貨架</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="shelf-grid" id="shelfGrid">
+                                <!-- 貨架卡片將由 JavaScript 動態生成 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右側：明星商品與警告 -->
+                    <div class="right-column">
+                        <!-- 明星商品區 -->
+                        <div class="bestsellers-section">
+                            <h2 class="bestsellers-title">
+                                <span>⭐</span>
+                                今日明星商品
+                            </h2>
+                            <div class="bestsellers-list">
+                                <div class="bestseller-card">
+                                    <div class="bestseller-rank">1</div>
+                                    <div class="bestseller-info">
+                                        <div class="bestseller-name">有機拿鐵咖啡</div>
+                                        <div class="bestseller-sales">銷售 124 杯 (P001)</div>
+                                    </div>
+                                </div>
+                                <div class="bestseller-card">
+                                    <div class="bestseller-rank">2</div>
+                                    <div class="bestseller-info">
+                                        <div class="bestseller-name">巧克力蛋糕</div>
+                                        <div class="bestseller-sales">銷售 89 個 (P008)</div>
+                                    </div>
+                                </div>
+                                <div class="bestseller-card">
+                                    <div class="bestseller-rank">3</div>
+                                    <div class="bestseller-info">
+                                        <div class="bestseller-name">酪梨吐司</div>
+                                        <div class="bestseller-sales">銷售 67 份 (P019)</div>
+                                    </div>
+                                </div>
+                                <div class="bestseller-card">
+                                    <div class="bestseller-rank">4</div>
+                                    <div class="bestseller-info">
+                                        <div class="bestseller-name">水果奶昔</div>
+                                        <div class="bestseller-sales">銷售 45 杯 (P031)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 庫存警告區 -->
+                        <div class="alerts-section">
+                            <h2 class="alerts-title">
+                                <span>⚠️</span>
+                                庫存警告
+                            </h2>
+                            <div class="alert-item">
+                                <div class="alert-icon">🔴</div>
+                                <div class="alert-text">
+                                    <strong>P056 - 特調咖啡豆</strong><br>
+                                    庫存剩餘 3 包，建議立即補貨
+                                </div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-icon">🔴</div>
+                                <div class="alert-text">
+                                    <strong>P062 - 有機牛奶</strong><br>
+                                    庫存剩餘 2 瓶，預計明日售完
+                                </div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-icon">🟡</div>
+                                <div class="alert-text">
+                                    <strong>P025 - 季節限定餅乾</strong><br>
+                                    庫存剩餘 8 包，需要關注
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他頁面內容將由 JavaScript 動態載入 -->
+            <div id="shelf-management-page" class="page-content">
+                <div class="page-header">
+        <h1 class="page-title">貨架管理</h1>
+        <p class="page-subtitle">管理所有貨架的狀態、佈局和商品陳列</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <div class="stat-header">
+                <span class="stat-title">總貨架數</span>
+                <div class="stat-icon" style="background: #dbeafe; color: #3b82f6;">🏪</div>
+            </div>
+            <div class="stat-value" id="totalShelves">4</div>
+        </div>
+
+        <div class="stat-card published">
+            <div class="stat-header">
+                <span class="stat-title">已發佈</span>
+                <div class="stat-icon" style="background: #dcfce7; color: #10b981;">✅</div>
+            </div>
+            <div class="stat-value" id="publishedShelves">2</div>
+        </div>
+
+        <div class="stat-card draft">
+            <div class="stat-header">
+                <span class="stat-title">草稿</span>
+                <div class="stat-icon" style="background: #fef3c7; color: #f59e0b;">📝</div>
+            </div>
+            <div class="stat-value" id="draftShelves">1</div>
+        </div>
+
+        <div class="stat-card usage">
+            <div class="stat-header">
+                <span class="stat-title">平均使用率</span>
+                <div class="stat-icon" style="background: #ede9fe; color: #8b5cf6;">📊</div>
+            </div>
+            <div class="stat-value" id="avgUsageRate">85%</div>
+        </div>
+    </div>
+
+    <div class="management-toolbar">
+        <div class="toolbar-left">
+            <div class="filter-group">
+                <label class="filter-label">狀態：</label>
+                <select class="filter-select" id="statusFilter" onchange="filterShelves()">
+                    <option value="all">全部</option>
+                    <option value="published">已發佈</option>
+                    <option value="draft">草稿</option>
+                    <option value="maintenance">維護中</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">區域：</label>
+                <select class="filter-select" id="areaFilter" onchange="filterShelves()">
+                    <option value="all">全部區域</option>
+                    <option value="A">A區</option>
+                    <option value="B">B區</option>
+                    <option value="C">C區</option>
+                    <option value="D">D區</option>
+                    <option value="E">E區</option>
+                    <option value="F">F區</option>
+                </select>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <button class="toolbar-btn" onclick="refreshShelves()">
+                <span>🔄</span>
+                <span>重新整理</span>
+            </button>
+            <button class="toolbar-btn" onclick="bulkPublish()">
+                <span>🚀</span>
+                <span>批量發佈</span>
+            </button>
+            <button class="toolbar-btn export" onclick="exportShelves()">
+                <span>📊</span>
+                <span>匯出報表</span>
+            </button>
+            <button class="add-shelf-btn" onclick="showAddShelfModal()">
+                <span>+</span>
+                <span>新增貨架</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="management-section">
+        <div class="shelf-management-grid" id="managementShelfGrid">
+            </div>
+    </div>
+            </div>
+
+            <div id="inventory-page" class="page-content">
+                <div class="page-header">
+        <h1 class="page-title">商品庫存</h1>
+        <p class="page-subtitle">即時監控商品庫存狀況，設定補貨提醒</p>
+    </div>
+
+    <div class="inventory-summary" id="inventorySummary">
+        <div class="summary-card">
+            <div class="summary-number" id="totalProductsCount">0</div>
+            <div class="summary-label">總商品數</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number" id="lowStockCount">0</div>
+            <div class="summary-label">低庫存商品</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number" id="outOfStockCount">0</div>
+            <div class="summary-label">缺貨商品</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-number" id="avgStockRate">0%</div>
+            <div class="summary-label">平均庫存率</div>
+        </div>
+    </div>
+
+    <div class="management-toolbar">
+        <div class="toolbar-left">
+            <div class="filter-group">
+                <label class="filter-label">狀態：</label>
+                <select class="filter-select" id="inventoryStatusFilter" onchange="renderInventoryTable()">
+                    <option value="all">全部</option>
+                    <option value="sufficient">充足</option>
+                    <option value="low">低庫存</option>
+                    <option value="critical">緊急</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">分類：</label>
+                <select class="filter-select" id="inventoryCategoryFilter" onchange="renderInventoryTable()">
+                    <option value="all">全部分類</option>
+                    <option value="drink">飲料</option>
+                    <option value="food">食品</option>
+                    <option value="bean">咖啡豆</option>
+                </select>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <button class="toolbar-btn" onclick="renderInventoryTable()">
+                <span>🔄</span>
+                <span>重新整理</span>
+            </button>
+            <button class="toolbar-btn export" onclick="exportData('inventory')">
+                <span>📊</span>
+                <span>匯出報表</span>
+            </button>
+            <button class="toolbar-btn add-product-btn" onclick="showAddProductModal()">
+                <span>+</span>
+                <span>新增商品</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="inventory-table-container">
+        <div class="inventory-table">
+            <div class="table-header">
+                <div class="table-cell">商品編號</div>
+                <div class="table-cell">商品名稱</div>
+                <div class="table-cell">分類</div>
+                <div class="table-cell">庫存數量</div>
+                <div class="table-cell">安全庫存</div>
+                <div class="table-cell">庫存狀態</div>
+                <div class="table-cell">操作</div>
+            </div>
+            <div class="table-body" id="inventoryTableBody">
+                </div>
+        </div>
+    </div>
+            </div>
+
+            <div id="bestsellers-page" class="page-content">
+                <div class="coming-soon">
+                    <h3>明星商品頁面</h3>
+                    <p>明星商品分析功能</p>
+                </div>
+            </div>
+
+            <div id="sales-report-page" class="page-content">
+    <div class="page-header">
+        <h1 class="page-title">銷售報表</h1>
+        <p class="page-subtitle">多維度分析銷售數據、圖表展示與趨勢預測</p>
+    </div>
+
+    <div class="report-filters">
+        <div class="date-range">
+            <label class="filter-label">日期範圍：</label>
+            <input type="date" class="date-input" id="startDate">
+            <span>到</span>
+            <input type="date" class="date-input" id="endDate">
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">分類：</label>
+            <select class="filter-select" id="salesCategoryFilter">
+                <option value="all">全部分類</option>
+                <option value="drink">飲料</option>
+                <option value="food">食品</option>
+                <option value="bean">咖啡豆</option>
+            </select>
+        </div>
+        <button class="toolbar-btn btn-primary" onclick="generateSalesReport()">
+            <span>📈</span>
+            <span>生成報表</span>
+        </button>
+        <button class="toolbar-btn export" onclick="exportData('sales')">
+            <span>📊</span>
+            <span>匯出報表</span>
+        </button>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card sales">
+            <div class="stat-header">
+                <span class="stat-title">總銷售額</span>
+                <div class="stat-icon" style="background: #dcfce7; color: #10b981;">💰</div>
+            </div>
+            <div class="stat-value" id="totalSalesAmount">--</div>
+            <div class="stat-change positive">
+                <span>+NT$12,450</span>
+                <span>較上期成長</span>
+            </div>
+        </div>
+
+        <div class="stat-card inventory">
+            <div class="stat-header">
+                <span class="stat-title">總交易數</span>
+                <div class="stat-icon" style="background: #dbeafe; color: #3b82f6;">🛒</div>
+            </div>
+            <div class="stat-value" id="totalTransactions">--</div>
+            <div class="stat-change positive">
+                <span>+12.5%</span>
+                <span>較上期成長</span>
+            </div>
+        </div>
+
+        <div class="stat-card alerts">
+            <div class="stat-header">
+                <span class="stat-title">客單價</span>
+                <div class="stat-icon" style="background: #fef3c7; color: #f59e0b;">👤</div>
+            </div>
+            <div class="stat-value" id="averageOrderValue">--</div>
+            <div class="stat-change negative">
+                <span>-2.1%</span>
+                <span>較上期下滑</span>
+            </div>
+        </div>
+
+        <div class="stat-card performance">
+            <div class="stat-header">
+                <span class="stat-title">熱銷商品數</span>
+                <div class="stat-icon" style="background: #ede9fe; color: #8b5cf6;">🔥</div>
+            </div>
+            <div class="stat-value" id="topSellingItems">--</div>
+            <div class="stat-change positive">
+                <span>+5</span>
+                <span>較上期增加</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-charts">
+        <div class="chart-card">
+    <div class="chart-header">
+        <h3 class="chart-title">銷售額趨勢圖</h3>
+        <span class="chart-period">近30天</span>
+    </div>
+    <canvas id="salesTrendChart"></canvas>
+</div>
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">商品銷售排行</h3>
+            </div>
+            <div class="sales-ranking" id="salesRankingList">
+                </div>
+        </div>
+    </div>
+</div>
+
+            <div id="customer-analysis-page" class="page-content">
+                <div class="coming-soon">
+                    <h3>客戶分析頁面</h3>
+                    <p>客戶行為分析功能</p>
+                </div>
+            </div>
+
+            <div id="profit-analysis-page" class="page-content">
+                <div class="coming-soon">
+                    <h3>獲利分析頁面</h3>
+                    <p>獲利能力分析功能</p>
+                </div>
+            </div>
+
+            <div id="system-settings-page" class="page-content">
+                <div class="coming-soon">
+                    <h3>系統設定頁面</h3>
+                    <p>系統參數設定功能</p>
+                </div>
+            </div>
+
+            <div id="data-sync-page" class="page-content">
+                <div class="coming-soon">
+                    <h3>資料同步頁面</h3>
+                    <p>資料同步管理功能</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增貨架模態框 -->
+    <div class="modal-overlay" id="addShelfModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">新增貨架</h3>
+                <button class="modal-close" onclick="hideAddShelfModal()">&times;</button>
+            </div>
+            
+            <form id="addShelfForm">
+                <div class="form-group">
+                    <label class="form-label">貨架名稱</label>
+                    <input type="text" name="shelfName" class="form-input" placeholder="例如：A區貨架 #5" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">所屬區域</label>
+                        <select name="shelfArea" class="form-select" required>
+                            <option value="">請選擇區域</option>
+                            <option value="A">A區</option>
+                            <option value="B">B區</option>
+                            <option value="C">C區</option>
+                            <option value="D">D區</option>
+                            <option value="E">E區</option>
+                            <option value="F">F區</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">貨架類型</label>
+                        <select name="shelfType" class="form-select">
+                            <option value="standard">標準貨架</option>
+                            <option value="premium">精品展示架</option>
+                            <option value="promotion">促銷展示架</option>
+                            <option value="seasonal">季節性貨架</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">貨架層數</label>
+                        <input type="number" name="shelfRows" id="shelfRows" class="form-input" 
+                               value="3" min="1" max="6" onchange="updateShelfPreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">每層商品數</label>
+                        <input type="number" name="shelfCols" id="shelfCols" class="form-input" 
+                               value="6" min="3" max="10" onchange="updateShelfPreview()">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">備註說明</label>
+                    <input type="text" name="shelfNotes" class="form-input" 
+                           placeholder="選填：特殊說明或注意事項">
+                </div>
+                
+                <div class="shelf-size-preview">
+                    <div class="preview-title">貨架預覽</div>
+                    <div class="preview-grid">
+                        <!-- 預覽內容由 JavaScript 生成 -->
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="hideAddShelfModal()">取消</button>
+                <button type="button" class="btn-primary" onclick="createNewShelf()">建立貨架</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 發佈確認對話框 -->
+    <div class="modal-overlay" id="publishConfirmModal">
+        <div class="confirm-dialog">
+            <div class="confirm-icon">🚀</div>
+            <h3 class="confirm-title">確認發佈貨架</h3>
+            <p class="confirm-message">
+                確定要發佈貨架 "<span id="confirmShelfName"></span>" 嗎？<br>
+                發佈後貨架將開始運行，客戶可以看到商品陳列。
+            </p>
+            <div class="confirm-actions">
+                <button class="btn-secondary" onclick="hidePublishConfirmModal()">取消</button>
+                <button class="btn-primary" id="confirmPublishBtn">確認發佈</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品庫存面板 -->
+    <div class="product-panel" id="productPanel">
+        <div class="panel-header">
+            <h3 class="panel-title">商品庫存</h3>
+            <button class="close-btn" onclick="toggleProductPanel()">&times;</button>
+        </div>
+        <div class="product-list">
+            <div class="product-item" draggable="true" data-product="P063">
+                <div class="product-name">新品 - 季節水果茶</div>
+                <div class="product-id">商品編號: P063</div>
+            </div>
+            <div class="product-item" draggable="true" data-product="P064">
+                <div class="product-name">新品 - 手工餅乾</div>
+                <div class="product-id">商品編號: P064</div>
+            </div>
+            <div class="product-item" draggable="true" data-product="P065">
+                <div class="product-name">新品 - 有機沙拉</div>
+                <div class="product-id">商品編號: P065</div>
+            </div>
+            <div class="product-item" draggable="true" data-product="P066">
+                <div class="product-name">新品 - 特調咖啡</div>
+                <div class="product-id">商品編號: P066</div>
+            </div>
+            <div class="product-item" draggable="true" data-product="P067">
+                <div class="product-name">新品 - 能量飲品</div>
+                <div class="product-id">商品編號: P067</div>
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>
