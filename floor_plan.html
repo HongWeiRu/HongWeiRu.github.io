@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>店鋪平面圖 - ShelfManager Pro</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+          "Helvetica Neue", sans-serif;
+        background: #f8fafb;
+      }
+      .floor-plan-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      .floor-plan-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      .shelf-hotspot {
+        position: absolute;
+        background: rgba(59, 130, 246, 0.5);
+        border: 2px solid #3b82f6;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .shelf-hotspot:hover {
+        background: rgba(59, 130, 246, 0.7);
+        transform: scale(1.05);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="floor-plan-container">
+      <img
+        src="LINE_ALBUM_台隆美麗華店_250826_1.jpg"
+        alt="店鋪平面圖"
+        class="floor-plan-image"
+      />
+
+      <a
+        href="shelf_management.html"
+        class="shelf-hotspot"
+        style="top: 15%; left: 25%; width: 10%; height: 20%"
+      >
+        A區貨架
+      </a>
+      <a
+        href="shelf_management.html"
+        class="shelf-hotspot"
+        style="top: 15%; left: 65%; width: 10%; height: 20%"
+      >
+        B區貨架
+      </a>
+      <a
+        href="shelf_management.html"
+        class="shelf-hotspot"
+        style="top: 60%; left: 25%; width: 10%; height: 20%"
+      >
+        C區貨架
+      </a>
+      <a
+        href="shelf_management.html"
+        class="shelf-hotspot"
+        style="top: 60%; left: 65%; width: 10%; height: 20%"
+      >
+        D區貨架
+      </a>
+    </div>
+  </body>
+</html>
